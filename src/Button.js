@@ -2,7 +2,7 @@ import './App.css';
 
 function Button(props) {
   return (
-    <input type="button" className='button' value={'1'} onClick={()=>props.buttonClick('1')}/>
+    <input type="button" className='button' value={props.value} onClick={()=>props.buttonClick(props.value)}/>
   );
 }
 
