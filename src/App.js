@@ -8,7 +8,7 @@ function App() {
   const [result, setResult] = useState('0')
 
   const buttonClick = (val) => {
-    setResult(val)
+    setResult(result + val)
   }
   return (
     <div className="App">
