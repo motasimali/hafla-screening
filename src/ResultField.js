@@ -1,8 +1,8 @@
 import './App.css';
 
-function ResultField() {
+function ResultField(props) {
   return (
-    <input type="text" className='result-field' value={'0'} />
+    <input type="text" className='result-field' value={props.result} onChange={(e)=> console.log(e.target.value)}  />
   );
 }
 

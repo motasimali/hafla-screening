@@ -1,8 +1,8 @@
 import './App.css';
 
-function Button() {
+function Button(props) {
   return (
-    <input type="button" className='button' value={'1'}/>
+    <input type="button" className='button' value={'1'} onClick={()=>props.buttonClick('1')}/>
   );
 }
 
