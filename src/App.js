@@ -2,19 +2,25 @@ import './App.css';
 import ResultField from './ResultField';
 import Button from './Button';
 import { useState } from 'react';
+import EqualButton from './EqualButton';
 
 function App() {
 
   const [result, setResult] = useState('0')
+  const [calc, ]= useState(0)
 
   const buttonClick = (val) => {
     setResult(result + val)
   }
 
-  const handleSum = () => {
-    if (result.slice(-1) !== "+")
-      setResult(result + "+")
+  const handleCalc= (val) => {
+    const res = result.split("+");
+    if(res.length === 2) {
+      setResult(parseInt(res[0])+parseInt(res[1]))
+    }
   }
+
+
   return (
     <div className="App">
       <header className="App-header">
@@ -38,7 +44,8 @@ function App() {
 
         <div className='buttons-line'>
           <Button value={'0'} buttonClick={buttonClick} />
-          <Button value={'+'} buttonClick={handleSum} />
+          <Button value={'+'} buttonClick={buttonClick} />
+          <EqualButton value={calc} buttonClick={handleCalc} />
         </div>
 
 
