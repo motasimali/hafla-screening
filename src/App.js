@@ -10,6 +10,11 @@ function App() {
   const buttonClick = (val) => {
     setResult(result + val)
   }
+
+  const handleSum = () => {
+    if (result.slice(-1) !== "+")
+      setResult(result + "+")
+  }
   return (
     <div className="App">
       <header className="App-header">
@@ -33,6 +38,7 @@ function App() {
 
         <div className='buttons-line'>
           <Button value={'0'} buttonClick={buttonClick} />
+          <Button value={'+'} buttonClick={handleSum} />
         </div>
 
 
