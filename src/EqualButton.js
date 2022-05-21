@@ -2,7 +2,7 @@ import './App.css';
 
 function EqualButton(props) {
   return (
-    <input type="button" className='button' value={'='} onClick={()=>props.buttonClick(parseInt(props.value))}/>
+    <input type="button" className='button' value={'='} onClick={()=>props.buttonClick()}/>
   );
 }
 

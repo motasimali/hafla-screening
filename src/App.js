@@ -7,17 +7,33 @@ import EqualButton from './EqualButton';
 function App() {
 
   const [result, setResult] = useState('0')
-  const [calc, ]= useState(0)
 
   const buttonClick = (val) => {
+
     setResult(result + val)
   }
 
-  const handleCalc= (val) => {
-    const res = result.split("+");
-    if(res.length === 2) {
-      setResult(parseInt(res[0])+parseInt(res[1]))
+  const handleSum = () => {
+    if (result.slice(-1) !== "+") {
+      setResult(result + "+")
     }
+  }
+
+  const handleCalc = () => {
+    if (result.slice(-1) !== "+") {
+      const res = result.split("+");
+      if (res.length === 2) {
+        setResult(parseInt(res[0]) + parseInt(res[1]))
+      }
+      if (res.length > 2) {
+        let computedVal = 0;
+        for (let i = 0; i < res.length; i++) {
+          computedVal = computedVal + parseInt(res[i])
+        }
+        setResult(computedVal.toString())
+      }
+    }
+
   }
 
 
@@ -44,8 +60,8 @@ function App() {
 
         <div className='buttons-line'>
           <Button value={'0'} buttonClick={buttonClick} />
-          <Button value={'+'} buttonClick={buttonClick} />
-          <EqualButton value={calc} buttonClick={handleCalc} />
+          <Button value={'+'} buttonClick={handleSum} />
+          <EqualButton buttonClick={handleCalc} />
         </div>
 
 
