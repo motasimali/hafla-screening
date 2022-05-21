@@ -7,10 +7,17 @@ import EqualButton from './EqualButton';
 function App() {
 
   const [result, setResult] = useState('0')
+  const [computed, setComputed] = useState(false)
 
   const buttonClick = (val) => {
+    if(computed) {
+      setComputed(false)
+      result > 0 ? setResult(val) : setResult(result + val)
+    } else {
+      result === "0" ? setResult(val) : setResult(result + val)
+    }
+    
 
-    setResult(result + val)
   }
 
   const handleSum = () => {
@@ -19,21 +26,23 @@ function App() {
     }
   }
 
-  const handleCalc = () => {
-    if (result.slice(-1) !== "+") {
-      const res = result.split("+");
-      if (res.length === 2) {
-        setResult(parseInt(res[0]) + parseInt(res[1]))
-      }
-      if (res.length > 2) {
-        let computedVal = 0;
-        for (let i = 0; i < res.length; i++) {
-          computedVal = computedVal + parseInt(res[i])
-        }
-        setResult(computedVal.toString())
-      }
-    }
+  const calculate = (val) => {
+    const res = val.split("+");
+    let computedVal = 0;
 
+    for (let i = 0; i < res.length; i++) {
+      computedVal = computedVal + parseInt(res[i])
+    }
+    computedVal = computedVal.toString()
+    setResult(computedVal)
+  }
+  const handleCalc = () => {
+      if (result.slice(-1) !== "+") {
+        calculate(result)
+      } else {
+        calculate(result.slice(0, -1))
+      }
+      setComputed(true)
   }
 
 
