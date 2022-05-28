@@ -7,42 +7,81 @@ import EqualButton from './EqualButton';
 function App() {
 
   const [result, setResult] = useState('0')
-  const [computed, setComputed] = useState(false)
+  const [lastOp, setLastOp] = useState(null)
 
   const buttonClick = (val) => {
-    if(computed) {
-      setComputed(false)
+    if (lastOp === "=") {
       result > 0 ? setResult(val) : setResult(result + val)
     } else {
       result === "0" ? setResult(val) : setResult(result + val)
     }
     
-
+    setLastOp(null)
   }
 
-  const handleSum = () => {
-    if (result.slice(-1) !== "+") {
-      setResult(result + "+")
+  const handleOp = (op) => {
+    if( lastOp === "+" || lastOp === "*") {
+      return;
+    } else {
+      setResult(result + op)
+      setLastOp(op)
     }
   }
 
-  const calculate = (val) => {
-    const res = val.split("+");
-    let computedVal = 0;
-
-    for (let i = 0; i < res.length; i++) {
-      computedVal = computedVal + parseInt(res[i])
+  const calculate = (tokens) => {
+    const operatorPrecedence = [
+      {'*': (a,b) => a*b},
+      {'+': (a,b) => a+b}
+    ];
+    let operator;
+    for (const operators of operatorPrecedence) {
+      const newTokens = [];
+      for(const token of tokens) {
+        if(token in operators) {
+          operator = operators[token]
+        } else if (operator) {
+          newTokens[newTokens.length-1] = operator(newTokens[newTokens.length - 1],token)
+          operator = null;
+        } else {
+          newTokens.push(token)
+        }
+      }
+      tokens = newTokens;
     }
-    computedVal = computedVal.toString()
-    setResult(computedVal)
+    if(tokens.length > 1) {
+      console.log("Err");
+      return tokens;
+    } else {
+      return tokens[0];
+    }
   }
   const handleCalc = () => {
-      if (result.slice(-1) !== "+") {
-        calculate(result)
+    setResult(calculate(tokenzie(result)))
+    setLastOp("=")
+  }
+
+  const makeButton = (text, call) => {
+    return <Button value={text} buttonClick={call} />
+  }
+
+  // [2,'+',3,'*',2]
+
+  function tokenzie(text) {
+    const r = []
+    let token = ''
+    for (const character of text) {
+      if('+*'.indexOf(character) > -1) {
+        r.push(parseFloat(token),character)
+        token = ''
       } else {
-        calculate(result.slice(0, -1))
+        token += character
       }
-      setComputed(true)
+    }
+    if(token!== '') {
+      r.push(parseFloat(token))
+    }
+    console.log(r)
+    return r
   }
 
 
@@ -51,26 +90,27 @@ function App() {
       <header className="App-header">
         <ResultField result={result} />
         <div className='buttons-line'>
-          <Button value={'9'} buttonClick={buttonClick} />
-          <Button value={'8'} buttonClick={buttonClick} />
-          <Button value={'7'} buttonClick={buttonClick} />
+          {makeButton('9', buttonClick)}
+          {makeButton('8', buttonClick)}
+          {makeButton('7', buttonClick)}
+          {makeButton('+', handleOp)}
         </div>
 
         <div className='buttons-line'>
-          <Button value={'6'} buttonClick={buttonClick} />
-          <Button value={'5'} buttonClick={buttonClick} />
-          <Button value={'4'} buttonClick={buttonClick} />
+          {makeButton('6', buttonClick)}
+          {makeButton('5', buttonClick)}
+          {makeButton('4', buttonClick)}
+          {makeButton('*', handleOp)}
         </div>
         <div className='buttons-line'>
-          <Button value={'3'} buttonClick={buttonClick} />
-          <Button value={'2'} buttonClick={buttonClick} />
-          <Button value={'1'} buttonClick={buttonClick} />
-        </div>
-
-        <div className='buttons-line'>
-          <Button value={'0'} buttonClick={buttonClick} />
-          <Button value={'+'} buttonClick={handleSum} />
+          {makeButton('3', buttonClick)}
+          {makeButton('2', buttonClick)}
+          {makeButton('1', buttonClick)}
           <EqualButton buttonClick={handleCalc} />
+        </div>
+
+        <div className='buttons-line'>
+          {makeButton('0', buttonClick)}
         </div>
 
 
