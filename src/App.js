@@ -8,6 +8,22 @@ function App() {
 
   const [result, setResult] = useState('0')
   const [lastOp, setLastOp] = useState(null)
+  const operatorPrecedence = {
+    '*': (a, b) => a * b,
+    '/': (a, b) => a / b,
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+  }
+  const operators = Object.keys(operatorPrecedence)
+  let buttonsArr = [
+    '9', '8', '7',
+    '6', '5', '4',
+    '3', '2', '1',
+    '0'
+  ]
+  const combinedArr = buttonsArr.concat(operators)
+
+
 
   const buttonClick = (val) => {
     if (lastOp === "=") {
@@ -15,12 +31,12 @@ function App() {
     } else {
       result === "0" ? setResult(val) : setResult(result + val)
     }
-    
+
     setLastOp(null)
   }
 
   const handleOp = (op) => {
-    if( lastOp === "+" || lastOp === "*") {
+    if (lastOp === "+" || lastOp === "*" || lastOp === '') {
       return;
     } else {
       setResult(result + op)
@@ -29,26 +45,20 @@ function App() {
   }
 
   const calculate = (tokens) => {
-    const operatorPrecedence = [
-      {'*': (a,b) => a*b},
-      {'+': (a,b) => a+b}
-    ];
     let operator;
-    for (const operators of operatorPrecedence) {
-      const newTokens = [];
-      for(const token of tokens) {
-        if(token in operators) {
-          operator = operators[token]
-        } else if (operator) {
-          newTokens[newTokens.length-1] = operator(newTokens[newTokens.length - 1],token)
-          operator = null;
-        } else {
-          newTokens.push(token)
-        }
+    const newTokens = [];
+    for (const token of tokens) {
+      if (token in operatorPrecedence) {
+        operator = operatorPrecedence[token]
+      } else if (operator) {
+        newTokens[newTokens.length - 1] = operator(newTokens[newTokens.length - 1], token)
+        operator = null;
+      } else {
+        newTokens.push(token)
       }
-      tokens = newTokens;
     }
-    if(tokens.length > 1) {
+    tokens = newTokens;
+    if (tokens.length > 1) {
       console.log("Err");
       return tokens;
     } else {
@@ -60,8 +70,12 @@ function App() {
     setLastOp("=")
   }
 
-  const makeButton = (text, call) => {
-    return <Button value={text} buttonClick={call} />
+  const makeNumberButton = (text) => {
+    return <Button key={text} value={text} buttonClick={buttonClick} />
+  }
+
+  const makeOpButton = (text) => {
+    return <Button key={text} value={text} buttonClick={handleOp} />
   }
 
   // [2,'+',3,'*',2]
@@ -70,14 +84,14 @@ function App() {
     const r = []
     let token = ''
     for (const character of text) {
-      if('+*'.indexOf(character) > -1) {
-        r.push(parseFloat(token),character)
+      if (operators.indexOf(character) > -1) {
+        r.push(parseFloat(token), character)
         token = ''
       } else {
         token += character
       }
     }
-    if(token!== '') {
+    if (token !== '') {
       r.push(parseFloat(token))
     }
     console.log(r)
@@ -90,30 +104,16 @@ function App() {
       <header className="App-header">
         <ResultField result={result} />
         <div className='buttons-line'>
-          {makeButton('9', buttonClick)}
-          {makeButton('8', buttonClick)}
-          {makeButton('7', buttonClick)}
-          {makeButton('+', handleOp)}
+          {combinedArr.map(val => {
+            if (val === '+' || val === '*') {
+              return makeOpButton(val)
+            } else {
+              return makeNumberButton(val)
+            }
+          }
+          )}
+          <EqualButton key="=" buttonClick={handleCalc} />
         </div>
-
-        <div className='buttons-line'>
-          {makeButton('6', buttonClick)}
-          {makeButton('5', buttonClick)}
-          {makeButton('4', buttonClick)}
-          {makeButton('*', handleOp)}
-        </div>
-        <div className='buttons-line'>
-          {makeButton('3', buttonClick)}
-          {makeButton('2', buttonClick)}
-          {makeButton('1', buttonClick)}
-          <EqualButton buttonClick={handleCalc} />
-        </div>
-
-        <div className='buttons-line'>
-          {makeButton('0', buttonClick)}
-        </div>
-
-
       </header>
     </div>
   );
